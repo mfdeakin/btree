@@ -1,0 +1,34 @@
+INTRODUCTION
+
+BTree is a simple C implementation of a thread safe disk based data structure.
+It creates a file to contain the tree and performs all operations immediately.
+As such, it should not be used directly by software needing persistent memory.
+The I/O and memory allocation default to the standard library implementations.
+BTree objects are configurable on a per-object basis for I/O and memory calls.
+Everything the BTree does is transparent, it does exactly what one told it to.
+
+USAGE
+
+struct btree *btree_init(char *, unsigned, size_t, struct btreefunc *)
+Initializes a BTree on storage medium. A filename, the order of the tree, and the element size are required.
+A btreefunc struct may be passed in to specify the functions used for memory allocation, I/O, and threads.
+If the fields of the btreefunc are NULL, or if the parameter itself is NULL, the defaults will be used.
+A comparison function defaults to simply comparing longs (the pointer itself),
+  while a copy function defaults to copying unsigned longs (the pointer itself).
+If no function setup is done for threading, the btree will not be implicitly safe with multiple threads.
+If the file exists it is deleted.
+
+struct btree *btree_read(char *, struct btreefunc *)
+Reads a BTree from the storage medium, if it exists. Otherwise returns NULL.
+
+void btree_del(struct btree *)
+Deletes the BTree. The file itself will remain and can be used later.
+
+unsigned btree_add(void *)
+Attempts to add the value. Returns 0 on success, 1 if the value already exists, or ERR_NULLPTR.
+
+unsigned btree_rem(void *)
+Attempts to delete the value. Returns 0 on success, 1 if the value is not in the tree, or ERR_NULLPTR.
+
+unsigned btree_find(void *cmp, void *dest)
+Attempts to copy the value matching cmp into dest. Returns 0 on success, 1 if the value is not in the tree, or ERR_NULLPTR.
